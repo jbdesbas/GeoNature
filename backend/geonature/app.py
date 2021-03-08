@@ -10,18 +10,19 @@ from flask_cors import CORS
 from sqlalchemy import exc as sa_exc
 from flask_sqlalchemy import before_models_committed
 
-from geonature.utils.env import MAIL, DB, MA, list_and_import_gn_modules
+from geonature.utils.config import config
+from geonature.utils.env import MAIL, DB, MA
+from geonature.utils.module import import_backend_enabled_modules
 
-def get_app(config, _app=None, with_external_mods=True, with_flask_admin=True):
-    # Make sure app is a singleton
-    if _app is not None:
-        return _app
 
+def create_app(with_external_mods=True, with_flask_admin=True):
     app = Flask(__name__)
     app.config.update(config)
 
     # Bind app to DB
     DB.init_app(app)
+
+    MAIL.init_app(app)
 
     # For deleting files on "delete" media
     @before_models_committed.connect_via(app)
@@ -40,16 +41,14 @@ def get_app(config, _app=None, with_external_mods=True, with_flask_admin=True):
     # Pass the ID_APP to the submodule to avoid token conflict between app on the same server
     app.config["ID_APP"] = app.config["ID_APPLICATION_GEONATURE"]
 
+    if with_flask_admin:
+        from geonature.core.admin.admin import admin
+        admin.init_app(app)
+
     with app.app_context():
         if app.config["MAIL_ON_ERROR"] and app.config["MAIL_CONFIG"]:
             from geonature.utils.logs import mail_handler
-
             logging.getLogger().addHandler(mail_handler)
-        # DB.create_all()
-
-        if with_flask_admin:
-            # from geonature.core.admin import flask_admin
-            from geonature.core.admin.admin import flask_admin
 
         from pypnusershub.routes import routes
 
@@ -129,9 +128,8 @@ def get_app(config, _app=None, with_external_mods=True, with_flask_admin=True):
 
         # Loading third-party modules
         if with_external_mods:
-            for conf, manifest, module in list_and_import_gn_modules(app):
-                app.register_blueprint(
-                    module.backend.blueprint.blueprint, url_prefix=conf["MODULE_URL"]
-                )
+            for module, blueprint in import_backend_enabled_modules():
+                app.config[blueprint.config['MODULE_CODE']] = blueprint.config
+                app.register_blueprint(blueprint, url_prefix=blueprint.config['MODULE_URL'])
         _app = app
     return app

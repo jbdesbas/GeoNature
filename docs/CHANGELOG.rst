@@ -2,15 +2,21 @@
 CHANGELOG
 =========
 
+2.6.3 (unreleased)
+------------------
+
+**🐛 Corrections**
+
+* 
+
 2.6.2 (2021-02-15)
 ------------------
 
 **🐛 Corrections**
 
-* Metadonnées: correction d'un bug sur la fiche JDD si le module d'import n'est pas installé
-* Metadonnées: correction d'un bug si le module d'import n'est pas installé
-* Metadonnées: la recherche rapide n'est plus sensible à la casse
-
+* Metadonnées : correction d'un bug sur la fiche JDD si le module d'import n'est pas installé
+* Metadonnées : correction de l'affichage de certains champs sur la fiche des cadres d'acquisition
+* Metadonnées : la recherche rapide n'est plus sensible à la casse casse
 
 2.6.1 (2021-02-11)
 ------------------
@@ -22,7 +28,7 @@ CHANGELOG
 * Permissions : correction de l'URL de redirection après l'éditiondes permissions (#1253)
 * Précision de la documentation de mise à jour de GeoNature (#1251)
 * Ajout du paramètre ``DISPLAY_EMAIL_INFO_OBS`` dans le fichier d'exemple de configuration (#1066 par @jbdesbas)
-* Sécurité : suppression d'une route inutile*
+* Sécurité : suppression d'une route inutile
 * Correction de l'URL de la doc sur la page d'accueil
 
 **⚠️ Notes de version**
@@ -470,12 +476,12 @@ par :
 **⚠️ Notes de version**
 
 * Vous pouvez passer directement à cette version depuis la 2.2.x, mais en suivant les notes des versions intermédiaires (NB : il n'est pas nécessaire d’exécuter le script ``migrate.sh`` des versions précédentes)
-* Installez ``pip3`` et ``virtualenv``
-::
+* Installez ``pip3`` et ``virtualenv``::
 
     sudo apt-get update
     sudo apt-get install python3-pip
     sudo pip3 install virtualenv==20.0.1
+
 * Rajoutez la ligne ``gun_timeout=30`` au fichier ``config/settings.ini`` puis rechargez supervisor (``sudo supervisorctl reload``). Il s'agit du temps maximal (en seconde) autorisé pour chaque requête. A augmenter, si vous avez déjà rencontré des problèmes de timeout.
 * Depuis le répertoire ``frontend``, lancez la commande ``nvm install``
 
